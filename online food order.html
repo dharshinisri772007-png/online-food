@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Complete Restaurant System</title>
+  <header>🍽️ Spice Garden Restaurant</header>
+<style>
+
+/* ================= RESET ================= */
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial, sans-serif;
+}
+header{
+text-align:center;
+font-size:34px;
+font-weight:bold;
+padding:20px;
+color:white;
+
+background:rgba(255,255,255,0.1);
+backdrop-filter:blur(12px);
+border-bottom:1px solid rgba(255,255,255,0.2);
+
+letter-spacing:2px;
+box-shadow:0 5px 20px rgba(0,0,0,0.3);
+
+animation:slideDown 1s ease;
+}
+
+/* animation */
+@keyframes slideDown{
+from{transform:translateY(-30px);opacity:0;}
+to{transform:translateY(0);opacity:1;}
+}
+body{
+min-height:100vh;
+color:white;
+overflow-x:hidden;
+
+background:linear-gradient(-45deg,#ff765a,#da77a4,#cd7e46,#c25389);
+background-size:400% 400%;
+animation:bg 10s ease infinite;
+}
+
+@keyframes bg{
+0%{background-position:0% 50%;}
+50%{background-position:100% 50%;}
+100%{background-position:0% 50%;}
+}
+
+/* ================= NAVBAR ================= */
+.navbar{
+position:sticky;
+top:0;
+width:100%;
+height: 100px;
+display:flex;
+justify-content:center;   /* 👈 center everything */
+align-items:center;
+padding:15px 30px;
+background:rgba(0,0,0,0.4);
+backdrop-filter:blur(10px);
+z-index:1000;
+}
+
+/* LOGO position (optional fix) */
+.logo{
+position:absolute;
+left:20px;
+font-size:22px;
+font-weight:bold;
+color:#00ffcc;
+}
+
+/* NAV LINKS CENTER */
+.nav-links{
+list-style:none;
+display:flex;
+gap:25px;
+justify-content:center;
+align-items:center;
+}
+
+/* LINKS STYLE */
+.nav-links li a{
+text-decoration:none;
+color:white;
+font-size:26px;
+padding:20px 12px;
+border-radius:8px;
+transition:0.3s;
+}
+
+/* HOVER */
+.nav-links li a:hover{
+background:#00ffcc;
+color:black;
+}
+/* MOBILE */
+@media(max-width:768px){
+.nav-links{
+flex-direction:column;
+background:rgba(0,0,0,0.8);
+position:absolute;
+top:60px;
+right:10px;
+padding:10px;
+border-radius:10px;
+}
+}
+/* ================= SLIDER ================= */
+.slider{
+width:100%;
+height: 600px;
+position:relative;
+overflow:hidden;
+margin-bottom:20px;
+}
+
+.slide{
+position:absolute;
+width:100%;
+height: 600px;
+opacity:0;
+transition:1s ease;
+}
+
+.slide img{
+width:100%;
+height:600px;
+object-fit:cover;
+filter:brightness(60%);
+}
+
+.slide.active{
+opacity:1;
+}
+
+/* CAPTION */
+.caption{
+position:absolute;
+bottom:20px;
+left:50%;
+transform:translateX(-50%);
+font-size:22px;
+font-weight:bold;
+background:rgba(0,0,0,0.5);
+padding:10px 20px;
+border-radius:10px;
+}
+
+/* BUTTONS */
+.prev, .next{
+position:absolute;
+top:50%;
+transform:translateY(-50%);
+background:rgba(0,0,0,0.5);
+color:white;
+border:none;
+padding:10px 15px;
+cursor:pointer;
+font-size:20px;
+border-radius:50%;
+}
+
+.prev{left:10px;}
+.next{right:10px;}
+
+.prev:hover, .next:hover{
+background:#00ffcc;
+}
+
+/* ================= HEADER ================= */
+header{
+text-align:center;
+padding:20px;
+font-size:30px;
+font-weight:bold;
+}
+
+/* ================= FORM ================= */
+.form{
+width:90%;
+margin:20px auto;
+padding:20px;
+background:rgba(0,0,0,0.5);
+border-radius:15px;
+}
+
+input,textarea{
+width:100%;
+padding:10px;
+margin:8px 0;
+border:none;
+border-radius:8px;
+}
+
+/* ================= MENU ================= */
+.wrapper{
+display:flex;
+flex-wrap:wrap;
+justify-content:center;
+gap:20px;
+padding:20px;
+}
+
+.card{
+width:250px;
+padding:15px;
+background:rgba(0,0,0,0.45);
+border-radius:15px;
+transition:0.3s;
+}
+
+.card:hover{
+transform:scale(1.05);
+box-shadow:0 0 15px #00ffcc;
+}
+
+.price{
+color:#00ffcc;
+}
+
+/* ================= JUICE SECTION ================= */
+.juice-toggle{
+text-align:center;
+margin:20px;
+padding:10px;
+cursor:pointer;
+background:rgba(0,0,0,0.5);
+border-radius:10px;
+}
+
+#juiceBox{
+display:none;
+}
+
+.item{
+background:rgba(255,255,255,0.08);
+margin:10px;
+padding:10px;
+border-radius:10px;
+}
+
+/* ================= BUTTON ================= */
+button{
+display:block;
+margin:20px auto;
+padding:12px 25px;
+border:none;
+border-radius:8px;
+background:#00ffcc;
+font-weight:bold;
+cursor:pointer;
+}
+
+button:hover{
+background:#00c3ff;
+transform:scale(1.05);
+}
+
+/* ================= BILL ================= */
+.bill{
+width:90%;
+margin:20px auto;
+padding:20px;
+background:rgba(0,0,0,0.6);
+border-radius:15px;
+}
+
+</style>
+</head>
+<nav class="navbar">
+
+  <ul class="nav-links">
+    <li><a href="#juice">🥤 Juice</a></li>
+    <li><a href="#snacks">🍟 Snacks</a></li>
+    <li><a href="#chats">🥗 Chats</a></li>
+    <li><a href="#icecream">🍦 Ice Cream</a></li>
+    <li><a href="#Milkshakes">🥤 Milkshakes</a></li>
+        <li><a href="#deserts">🍰 deserts</a></li>
+  </ul>
+</nav>
+<body>
+    <!-- ================= BANNER SLIDER ================= -->
+<div class="slider">
+
+  <div class="slide active">
+    <img src="restaturant image.png">
+  </div>
+</div>
+
+
+
+<style>
+#juiceBox{
+display:none;
+margin-top:10px;
+animation:slide 0.4s ease;
+}
+
+@keyframes slide{
+from{opacity:0;transform:translateY(-10px);}
+to{opacity:1;transform:translateY(0);}
+}
+
+/* ================= JUICE ITEM ================= */
+.item{
+background:rgba(255,255,255,0.08);
+padding:10px;
+margin:10px 0;
+border-radius:10px;
+transition:0.3s;
+}
+
+.item:hover{
+transform:scale(1.03);
+}
+
+/* juice image */
+.item img{
+width:100%;
+height:120px;
+object-fit:cover;
+border-radius:10px;
+margin-bottom:8px;
+}
+
+/* price */
+.price{
+color:#00ffcc;
+font-weight:bold;
+}
+
+/* input */
+input[type="number"]{
+width:60px;
+padding:5px;
+border-radius:5px;
+border:none;
+margin-top:5px;
+}
+.menu-title{
+text-align:center;
+margin-top:20px;
+font-size:28px;
+padding:10px 20px;
+display:inline-block;
+color:rgb(0, 0, 0);
+background:rgba(232, 176, 10, 0.1);
+backdrop-filter:blur(10px);
+border-radius:12px;
+border:1px solid rgba(255,255,255,0.2);
+box-shadow:0 8px 20px rgba(0,0,0,0.3);
+}
+/* ================= BUTTON ================= */
+button{
+display:block;
+margin:20px auto;
+padding:10px 20px;
+background:#00ffcc;
+border:none;
+border-radius:8px;
+cursor:pointer;
+font-weight:bold;
+}
+
+button:hover{
+background:#00c3ff;
+}
+
+/* ================= BILL ================= */
+#bill{
+width:90%;
+margin:20px auto;
+padding:15px;
+background:rgba(0,0,0,0.5);
+border-radius:15px;
+}
+
+</style>
+</head>
+
+<body>
+<h2 class="menu-title">🥤 Juice Menu</h2>
+<!-- ORANGE -->
+  <section id="juice">
+<div class="item">
+<img src="https://images.unsplash.com/photo-1613478223719-2ab802602423" alt="">
+<h3>Orange Juice</h3>
+<p class="price">₹80</p>
+<input type="checkbox" id="orange">
+Qty <input type="number" id="orangeQty" value="1">
+</div>
+
+<!-- MANGO -->
+<div class="item">
+<img src="mango.png" alt="">
+<h3>Mango Juice</h3>
+<p class="price">₹90</p>
+<input type="checkbox" id="mango">
+Qty <input type="number" id="mangoQty" value="1">
+</div>
+
+<!-- APPLE -->
+<div class="item">
+<img src="https://images.unsplash.com/photo-1567306226416-28f0efdc88ce" alt="">
+<h3>Apple Juice</h3>
+<p class="price">₹100</p>
+<input type="checkbox" id="apple">
+Qty <input type="number" id="appleQty" value="1">
+</div>
+
+<!-- WATERMELON -->
+<div class="item">
+<img src="watermelon.avif" alt="">
+<h3>Watermelon Juice</h3>
+<p class="price">₹70</p>
+<input type="checkbox" id="watermelon">
+Qty <input type="number" id="watermelonQty" value="1">
+</div>
+</section>
+</div>
+</div>
+
+<script>
+
+/* ================= TOGGLE JUICES ================= */
+function toggleJuices(){
+let box = document.getElementById("juiceBox");
+
+if(box.style.display === "block"){
+box.style.display = "none";
+} else {
+box.style.display = "block";
+}
+}
+
+/* ================= BILL CALCULATION ================= */
+function addItem(id, qtyId, price, name){
+if(document.getElementById(id).checked){
+let qty = parseInt(document.getElementById(qtyId).value);
+return `${name} x ${qty} = ₹${qty * price}<br>`;
+}
+return "";
+}
+
+function generateBill(){
+
+let total = 0;
+let bill = "";
+
+/* ITEMS */
+let items = [
+["orange","orangeQty",80,"Orange Juice"],
+["mango","mangoQty",90,"Mango Juice"],
+["apple","appleQty",100,"Apple Juice"],
+["watermelon","watermelonQty",70,"Watermelon Juice"]
+];
+
+for(let i=0;i<items.length;i++){
+let id = items[i][0];
+let qtyId = items[i][1];
+let price = items[i][2];
+let name = items[i][3];
+
+if(document.getElementById(id).checked){
+let qty = parseInt(document.getElementById(qtyId).value);
+let cost = qty * price;
+total += cost;
+bill += `${name} x ${qty} = ₹${cost}<br>`;
+}
+}
+
+/* FINAL OUTPUT */
+document.getElementById("bill").innerHTML = `
+<h2>🧾 Order Summary</h2>
+${bill}
+<hr>
+<h3>Total: ₹${total}</h3>
+`;
+
+}
+
+</script>
+<!-- SNACKS TITLE -->
+ <section id="snacks">
+<h2 class="menu-title">🍿 Snacks Menu</h2>
+
+<!-- BURGER SNACK -->
+<div class="item">
+<img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd" alt="">
+<h3>Veg Burger</h3>
+<p class="price">₹80</p>
+<input type="checkbox" id="burgerSnack">
+Qty <input type="number" id="burgerSnackQty" value="1">
+</div>
+
+<!-- SANDWICH -->
+<div class="item">
+<img src="https://images.unsplash.com/photo-1550507992-eb63ffee0847" alt="">
+<h3>Sandwich</h3>
+<p class="price">₹70</p>
+<input type="checkbox" id="sandwichSnack">
+Qty <input type="number" id="sandwichSnackQty" value="1">
+</div>
+
+<!-- FRIES -->
+<div class="item">
+<img src="https://images.unsplash.com/photo-1606755962773-d324e0a13086" alt="">
+<h3>chicken burger</h3>
+<p class="price">₹90</p>
+<input type="checkbox" id="chicken burger">
+Qty <input type="number" id="chickenburger" value="1">
+</div>
+
+<div class="item">
+<img src="french.avif" alt="">
+<h3>French Fries</h3>
+<p class="price">₹40</p>
+<input type="checkbox" id="friesSnack">
+Qty <input type="number" id="friesSnackQty" value="1">
+</div>
+
+
+</section>
+<!-- ICE CREAM TITLE -->
+  <section id="icecream">
+<h2 class="menu-title">🍦 Ice Cream Menu</h2>
+
+<!-- VANILLA -->
+<div class="item">
+<img src="https://images.unsplash.com/photo-1560008581-09826d1de69e" alt="">
+<h3>Vanilla Ice Cream</h3>
+<p class="price">₹60</p>
+<input type="checkbox" id="vanilla">
+Qty <input type="number" id="vanillaQty" value="1">
+</div>
+
+<!-- CHOCOLATE -->
+<div class="item">
+<img src="chocolate.jpg" alt="">
+<h3>Chocolate Ice Cream</h3>
+<p class="price">₹60</p>
+<input type="checkbox" id="chocolate">
+Qty <input type="number" id="chocolateQty" value="1">
+</div>
+
+<!-- STRAWBERRY -->
+<div class="item">
+<img src="https://images.unsplash.com/photo-1488900128323-21503983a07e" alt="">
+<h3>Strawberry Ice Cream</h3>
+<p class="price">₹70</p>
+<input type="checkbox" id="strawberry">
+Qty <input type="number" id="strawberryQty" value="1">
+</div>
+
+
+<!-- CHOCOLATE -->
+<div class="item">
+<img src="butter.avif" alt="">
+<h3>butterscotch Ice Cream</h3>
+<p class="price">₹80</p>
+<input type="checkbox" id="butterscotch">
+Qty <input type="number" id="butterscotchQty" value="1">
+</div>
+
+
+<!-- CHOCOLATE -->
+<div class="item">
+<img src="pista.webp" alt="">
+<h3>pista Ice Cream</h3>
+<p class="price">₹70</p>
+<input type="checkbox" id="pista">
+Qty <input type="number" id="pistaQty" value="1">
+</div>
+</section>
+
+
+
+<!-- CHAT TITLE -->
+<h2 class="menu-title">🥗 Chat Menu</h2>
+
+<!-- PANIPURI -->
+  <section id="chats">
+<div class="item">
+<img src="pani puri.JPG" alt="">
+<h3>Pani Puri</h3>
+<p class="price">₹50</p>
+<input type="checkbox" id="panipuri">
+Qty <input type="number" id="panipuriQty" value="1">
+</div>
+
+<!-- BHEL PURI -->
+<div class="item">
+<img src="bhel.jpg" alt="">
+<h3>Bhel Puri</h3>
+<p class="price">₹60</p>
+<input type="checkbox" id="bhelpuri">
+Qty <input type="number" id="bhelpuriQty" value="1">
+</div>
+
+<!-- SEV PURI -->
+<div class="item">
+<img src="sev.jpg" alt="">
+<h3>Sev Puri</h3>
+<p class="price">₹70</p>
+<input type="checkbox" id="sevpuri">
+Qty <input type="number" id="sevpuriQty" value="1">
+</div>
+
+
+<!-- SEV PURI -->
+<div class="item">
+<img src="pav.jpg" alt="">
+<h3>pav bhaji</h3>
+<p class="price">₹60</p>
+<input type="checkbox" id="pavbhaji">
+Qty <input type="number" id="pavbhajiQty" value="1">
+</div>
+
+
+<!-- SEV PURI -->
+<div class="item">
+<img src="samosa.jpg" alt="">
+<h3>samosa</h3>
+<p class="price">₹15</p>
+<input type="checkbox" id="samosa">
+Qty <input type="number" id="samosa" value="1">
+</div>
+</section>
+
+
+<h2 class="menu-title">🧋Milkshakes Menu</h2>
+
+<section id = "Milkshakes">
+<div class="item">
+    <img src="chocolate milk.webp" alt="">
+    <h3>Chocolate Milkshake</h3>
+    <p class="price">₹90</p>
+    <input type="checkbox" id="chocolateMilkshake">
+    Qty <input type="number" id="chocolateMilkshakeQty" value="1">
+</div>
+
+<div class="item">
+    <img src="strawberry.jpg" alt="">
+    <h3>Strawberry Milkshake</h3>
+    <p class="price">₹85</p>
+    <input type="checkbox" id="strawberryMilkshake">
+    Qty <input type="number" id="strawberryMilkshakeQty" value="1">
+</div>
+
+<div class="item">
+    <img src="https://images.unsplash.com/photo-1563805042-7684c019e1cb" alt="">
+    <h3>Vanilla Milkshake</h3>
+    <p class="price">₹80</p>
+    <input type="checkbox" id="vanillaMilkshake">
+    Qty <input type="number" id="vanillaMilkshakeQty" value="1">
+</div>
+
+<div class="item">
+    <img src="oreo.jpg" alt="">
+    <h3>Oreo Milkshake</h3>
+    <p class="price">₹110</p>
+    <input type="checkbox" id="oreoMilkshake">
+    Qty <input type="number" id="oreoMilkshakeQty" value="1">
+</div>
+</section>
+
+
+<h2 class="menu-title">🍰 DESERTS MENU</h2>
+
+<section id="deserts">
+<div class="item">
+    <img src="cake.jpg" alt="">
+    <h3>Chocolate Cake</h3>
+    <p class="price">₹120</p>
+    <input type="checkbox" id="chocolateCake">
+    Qty <input type="number" id="chocolateCakeQty" value="1">
+</div>
+
+<div class="item">
+    <img src="https://images.unsplash.com/photo-1519869325930-281384150729" alt="">
+    <h3>Strawberry Cheesecake</h3>
+    <p class="price">₹150</p>
+    <input type="checkbox" id="cheesecake">
+    Qty <input type="number" id="cheesecakeQty" value="1">
+</div>
+
+
+<div class="item">
+    <img src="browine.jpg" alt="">
+    <h3>Brownie with Ice Cream</h3>
+    <p class="price">₹130</p>
+    <input type="checkbox" id="brownie">
+    Qty <input type="number" id="brownieQty" value="1">
+</div>
+
+<div class="item">
+    <img src="gulab.jpg" alt="">
+    <h3>Gulab Jamun</h3>
+    <p class="price">₹70</p>
+    <input type="checkbox" id="gulabJamun">
+    Qty <input type="number" id="gulabJamunQty" value="1">
+</div>
+</section>
+<style>
+    /* ================= ITEM CARD (COMMON FOR ALL MENU TYPES) ================= */
+.item{
+background:rgba(255,255,255,0.08);
+padding:15px;
+margin:10px;
+border-radius:12px;
+transition:0.3s;
+box-shadow:0 8px 15px rgba(0,0,0,0.3);
+width:260px;
+display:inline-block;
+vertical-align:top;
+animation:fadeIn 0.6s ease;
+}
+
+.item:hover{
+transform:scale(1.05);
+box-shadow:0 0 15px #00ffcc;
+}
+
+/* IMAGE INSIDE ITEM */
+.item img{
+width:100%;
+height:140px;
+object-fit:cover;
+border-radius:10px;
+margin-bottom:8px;
+}
+
+/* TITLE */
+.item h3{
+margin:5px 0;
+font-size:18px;
+}
+
+/* PRICE */
+.price{
+color:#00ffcc;
+font-weight:bold;
+}
+
+/* CHECKBOX */
+.item input[type="checkbox"]{
+margin-top:5px;
+transform:scale(1.2);
+cursor:pointer;
+}
+
+/* QUANTITY INPUT */
+.item input[type="number"]{
+width:60px;
+padding:5px;
+border-radius:5px;
+border:none;
+margin-left:5px;
+}
+
+/* SECTION HEADINGS */
+h2{
+width:100%;
+text-align:center;
+margin-top:30px;
+font-size:24px;
+color:white;
+}
+
+/* FADE ANIMATION */
+@keyframes fadeIn{
+from{opacity:0;transform:translateY(20px);}
+to{opacity:1;transform:translateY(0);}
+}
+</style>
+<script>
+    /* ================= SNACKS ================= */
+add("burgerSnack","burgerSnackQty",120,"Veg Burger");
+add("sandwichSnack","sandwichSnackQty",90,"Sandwich");
+add("friesSnack","friesSnackQty",80,"French Fries");
+
+/* ================= ICE CREAM ================= */
+add("vanilla","vanillaQty",60,"Vanilla Ice Cream");
+add("chocolate","chocolateQty",80,"Chocolate Ice Cream");
+add("strawberry","strawberryQty",70,"Strawberry Ice Cream");
+
+/* ================= CHAT ITEMS ================= */
+add("panipuri","panipuriQty",50,"Pani Puri");
+add("bhelpuri","bhelpuriQty",60,"Bhel Puri");
+add("sevpuri","sevpuriQty",70,"Sev Puri");
+function add(id, qtyId, price, label){
+if(document.getElementById(id).checked){
+let qty = parseInt(document.getElementById(qtyId).value);
+let cost = qty * price;
+total += cost;
+items += `${label} x ${qty} = ₹${cost}<br>`;
+}
+}
+</script>
+
+<style>
+.form{
+    background: linear-gradient(135deg, #ffffff, #f9f9f9);
+    padding: 25px;
+    border-radius: 15px;
+    width: 400px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    margin-bottom:20px;
+}
+
+.form input, .form textarea{
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0;
+    border-radius: 8px;
+    border:1px solid #ddd;
+}
+
+/* BUTTON */
+.form button{
+    width:100%;
+    padding:12px;
+    background:green;
+    color:white;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+.form button:hover{
+    background:darkgreen;
+}
+
+/* BILL */
+.bill{
+    display:none;
+    background:rgb(255, 255, 255);
+    padding:15px;
+    border-radius:10px;
+    width:400px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.1);
+}
+
+#payBtn{
+    width:100%;
+    padding:10px;
+    background:blue;
+    color:white;
+    border:none;
+    border-radius:8px;
+    margin-top:10px;
+    cursor:pointer;
+}
+
+#payBtn:hover{
+    background:darkblue;
+}
+</style>
+</head>
+
+<body>
+
+<!-- CUSTOMER -->
+<div class="form">
+    <h2>Customer Details</h2>
+
+    <input type="text" id="name" placeholder="Name">
+    <input type="text" id="phone" placeholder="Mobile Number">
+    <textarea id="address" placeholder="Address"></textarea>
+
+    <button onclick="generateBill()">Generate Bill</button>
+</div>
+
+
+<!-- BILL -->
+<div class="bill" id="billBox">
+    <h2>🧾 Bill Summary</h2>
+
+    <p id="billDetails"></p>
+    <h3 id="total"></h3>
+
+    <button id="payBtn" onclick="payNow()" style="display:none;">
+        💳 Proceed to Payment
+    </button>
+</div>
+
+<script>
+function generateBill(){
+
+    let total = 0;
+    let items = "";
+
+    let name = document.getElementById("name").value;
+    let phone = document.getElementById("phone").value;
+    let address = document.getElementById("address").value;
+
+    if(name=="" || phone=="" || address==""){
+        alert("Please fill customer details!");
+        return;
+    }
+
+    function add(id, qtyId, price, label){
+        if(document.getElementById(id).checked){
+            let qty = parseInt(document.getElementById(qtyId).value);
+            let cost = qty * price;
+            total += cost;
+            items += `${label} x ${qty} = ₹${cost}<br>`;
+        }
+    }
+
+    add("burger","burgerQty",120,"🍔 Burger");
+    add("pizza","pizzaQty",250,"🍕 Pizza");
+    add("juice","juiceQty",80,"🧃 Juice");
+
+    if(items === ""){
+        alert("Select at least one item!");
+        return;
+    }
+
+    document.getElementById("billDetails").innerHTML =
+        `👤 <b>Name:</b> ${name}<br>
+         📞 <b>Phone:</b> ${phone}<br>
+         🏠 <b>Address:</b> ${address}<br><br>
+         🧾 <b>Items:</b><br>${items}`;
+
+    document.getElementById("total").innerText = "💰 Total: ₹" + total;
+
+    // SHOW BILL
+    document.getElementById("billBox").style.display = "block";
+
+    // SHOW PAYMENT BUTTON
+    document.getElementById("payBtn").style.display = "block";
+}
+
+function payNow(){
+    alert("✅ Payment Successful! Thank you for ordering 🍽️");
+}
+</script>
+
+
+</body>
+</html>
